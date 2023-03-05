@@ -4,19 +4,22 @@
   "description": "Ordering food and tracking your orders",
   "main": "server.js",
   "scripts": {
-    "start": "ts-node src/server.ts"
+    "start": "ts-node src/server.ts",
+    "dev": "NODE_ENV=development ts-node-dev src/server.ts"
   },
   "author": "Omar Khalid",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.17",
-    "nodemon": "^2.0.20",
+    "@types/morgan": "^1.9.4",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^4.9.5"
   }
 }
