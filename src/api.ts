@@ -24,6 +24,15 @@ const rootQueryType = new GraphQLObjectType({
       resolve: async () => {
         return await restaurantService.getAllRestaurants();
       }
+    },
+    restaurant: {
+      type: RestaurantType,
+      args: {
+        restaurantId: { type: new GraphQLNonNull(GraphQLInt) }
+      },
+      resolve: async (parent, args) => {
+        return await restaurantService.findRestaurantById(args.restaurantId)
+      }
     }
   }
 })
