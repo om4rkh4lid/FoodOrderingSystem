@@ -19,19 +19,28 @@ const rootQueryType = new GraphQLObjectType({
   name: 'RootQuery',
   description: 'Root of all query types',
   fields: {
-    restaurants: {
+    allRestaurants: {
       type: new GraphQLList(RestaurantType),
       resolve: async () => {
         return await restaurantService.getAllRestaurants();
       }
     },
-    restaurant: {
+    restaurantWithId: {
       type: RestaurantType,
       args: {
         restaurantId: { type: new GraphQLNonNull(GraphQLInt) }
       },
       resolve: async (parent, args) => {
         return await restaurantService.findRestaurantById(args.restaurantId)
+      }
+    },
+    restaurantsWithNameLike: {
+      type: new GraphQLList(RestaurantType),
+      args: {
+        nameQuery: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve: async (parent, args) => {
+        return await restaurantService.findRestaurantsWithNameLike(args.nameQuery);
       }
     }
   }
