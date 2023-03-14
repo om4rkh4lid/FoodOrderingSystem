@@ -1,9 +1,8 @@
-import environment from "dotenv";
+import * as environment from "dotenv";
+environment.config({ path: __dirname + '/../.env'});
 import Express from "express";
 import morgan from "morgan";
 import api, { rootEndpoint } from "./api";
-
-environment.config();
 
 const app: Express.Application = Express();
 const mode: string = process.env.NODE_ENV!;
