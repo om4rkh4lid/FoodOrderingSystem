@@ -1,26 +1,23 @@
 import { Client } from "pg";
 import { restaurants } from "../data/restaurants"
 import Restaurant from "../entities/restaurant";
+import RestaurantRepository from "../repositories/restaurantRepository";
 
 class RestaurantService {
   private repository;
 
-  constructor(repository: Client) {
+  constructor(repository: RestaurantRepository) {
     this.repository = repository;
   }
 
   getAllRestaurants = async () => {
-    await this.repository.connect();
-    const result = await this.repository.query('SELECT * FROM restaurants;');
-    const restaurants: Restaurant[] = result.rows.map(row => new Restaurant(row.user_id, row.restaurant_id, row.name, row.delivery_time));
-    await this.repository.end();
-    return restaurants;
+    return await this.repository.findAll();
   }
   findRestaurantById = async (restaurantId: number) => {
-    return restaurants.find(restaurant => restaurant.restaurantId === restaurantId);
+    return await this.repository.findById(restaurantId);
   }
   findRestaurantsWithNameLike = async (nameQuery: string) => {
-    return restaurants.filter(restaurant => restaurant.name.toLowerCase().includes(nameQuery.toLowerCase()));
+    return await this.repository.findWhereNameLike(nameQuery);
   }
 }
 

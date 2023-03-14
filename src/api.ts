@@ -2,10 +2,12 @@ import { graphqlHTTP } from "express-graphql"
 import { GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLSchema, GraphQLString } from "graphql";
 import RestaurantService from "./services/restaurant";
 import { getDatabaseClient } from "./database";
+import RestaurantRepository from "./repositories/restaurantRepository";
 
 const apiMiddleware = graphqlHTTP;
 
-const restaurantService = new RestaurantService(getDatabaseClient());
+const restaurantRepository = new RestaurantRepository(getDatabaseClient());
+const restaurantService = new RestaurantService(restaurantRepository);
 
 const RestaurantType = new GraphQLObjectType({
   name: 'Restaurant',
