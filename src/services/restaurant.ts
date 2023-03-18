@@ -1,6 +1,4 @@
 import { Client } from "pg";
-import { restaurants } from "../data/restaurants"
-import Restaurant from "../entities/restaurant";
 import RestaurantRepository from "../repositories/restaurantRepository";
 
 class RestaurantService {
