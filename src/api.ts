@@ -2,6 +2,7 @@ import { graphqlHTTP } from "express-graphql"
 import { GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLSchema, GraphQLString } from "graphql";
 import RestaurantService from "./services/restaurant";
 import RestaurantRepository from "./repositories/restaurantRepository";
+import Config from "./config";
 
 const apiMiddleware = graphqlHTTP;
 
@@ -55,6 +56,6 @@ const apiSchema = new GraphQLSchema({
 export const rootEndpoint = '/graphql';
 
 export default apiMiddleware({
-  graphiql: process.env.NODE_ENV! === 'development',
+  graphiql: Config.server.mode === 'development',
   schema: apiSchema
 });

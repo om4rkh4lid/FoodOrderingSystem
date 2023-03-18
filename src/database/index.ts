@@ -1,17 +1,20 @@
 import { Pool } from "pg";
+import Config from "../config";
 
 class Database {
   private pool: Pool;
   
   constructor() {
-    this.pool = new Pool({
-      host: process.env.PG_HOST,
-      port: parseInt(process.env.PG_PORT!),
-      user: process.env.PG_USER,
-      password: process.env.PG_PASSWORD,
-      database: process.env.PG_DATABASE,
-      ssl: false,
-    });
+    this.pool = new Pool(Config.database);
+    // which is short for
+    // this.pool = new Pool({
+    //   host: Config.database.host,
+    //   port: Config.database.port,
+    //   user: Config.database.user,
+    //   password: Config.database.password,
+    //   database: Config.database.database,
+    //   ssl: Config.database.ssl,
+    // });
   }
 
   query = async (query: string) => {
