@@ -1,5 +1,5 @@
 import { Client } from "pg";
-import RestaurantRepository from "../repositories/restaurantRepository";
+import RestaurantRepository from "../repositories/restaurant";
 
 class RestaurantService {
   private repository;

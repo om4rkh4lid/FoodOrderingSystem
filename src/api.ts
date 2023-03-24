@@ -1,13 +1,20 @@
 import { graphqlHTTP } from "express-graphql"
-import { GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLSchema, GraphQLString } from "graphql";
+import { GraphQLFloat, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLSchema, GraphQLString } from "graphql";
 import RestaurantService from "./services/restaurant";
-import RestaurantRepository from "./repositories/restaurantRepository";
+import RestaurantRepository from "./repositories/restaurant";
 import Config from "./config";
+import MenuService from "./services/menu";
+import MenuRepository from "./repositories/menu";
 
 const apiMiddleware = graphqlHTTP;
 
 const restaurantRepository = new RestaurantRepository();
+const menuRepository = new MenuRepository();
+
+const menuService = new MenuService(menuRepository);
 const restaurantService = new RestaurantService(restaurantRepository);
+
+
 
 const RestaurantType = new GraphQLObjectType({
   name: 'Restaurant',
@@ -16,6 +23,23 @@ const RestaurantType = new GraphQLObjectType({
     name: { type: new GraphQLNonNull(GraphQLString) },
     deliveryTime: { type: new GraphQLNonNull(GraphQLInt) },
   }
+});
+
+const MenuItemType = new GraphQLObjectType({
+  name: 'MenuItem',
+  fields: {
+    id: { type: new GraphQLNonNull(GraphQLFloat) },
+    name: { type: new GraphQLNonNull(GraphQLString) },
+    price: { type: new GraphQLNonNull(GraphQLFloat) },
+    description: { type: GraphQLString },
+  }
+});
+
+const MenuType = new GraphQLObjectType({
+  name: 'Menu',
+  fields: {
+    items: { type: new GraphQLNonNull(new GraphQLList(MenuItemType))}
+  },
 });
 
 const rootQueryType = new GraphQLObjectType({
@@ -44,6 +68,15 @@ const rootQueryType = new GraphQLObjectType({
       },
       resolve: async (parent, args) => {
         return await restaurantService.findRestaurantsWithNameLike(args.nameQuery);
+      }
+    },
+    menuForRestaurantWithId: {
+      type: MenuType,
+      args: {
+        restaurantId: { type: new GraphQLNonNull(GraphQLInt) }
+      },
+      resolve: async (parent, args) => {
+        return await menuService.findForRestaurantWithId(args.restaurantId)
       }
     }
   }
