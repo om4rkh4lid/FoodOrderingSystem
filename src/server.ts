@@ -2,12 +2,14 @@ import Config from "./config";
 import Express from "express";
 import morgan from "morgan";
 import api, { rootEndpoint } from "./api";
-
+import cors from "cors";
 const app: Express.Application = Express();
 
 if (Config.server.mode === 'development') {
   app.use(morgan('dev'));
 }
+
+app.use(cors());
 
 app.use(rootEndpoint, api);
 
