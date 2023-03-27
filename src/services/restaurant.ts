@@ -15,7 +15,7 @@ class RestaurantService {
     return await this.repository.findById(restaurantId);
   }
   findRestaurantsWithNameLike = async (nameQuery: string) => {
-    return await this.repository.findWhereNameLike(nameQuery);
+    return await this.repository.findWhere({ name: { like: nameQuery }});
   }
 }
 

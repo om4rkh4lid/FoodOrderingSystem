@@ -1,12 +1,33 @@
 import Database from "../database";
 import Restaurant from "../entities/restaurant";
-import Repository from "../interfaces/repository";
+import SearchableRepository from "../interfaces/searchableRepository";
+import SearchCriteria from "../types/searchCriteria";
 
-class RestaurantRepository implements Repository<Restaurant> {
+class RestaurantRepository implements SearchableRepository<Restaurant> {
   private database: Database;
 
   constructor() {
     this.database = new Database();
+  }
+
+  async findWhere(searchCriteria: SearchCriteria<Restaurant>): Promise<Restaurant[]> {
+    let query = 'SELECT * FROM restaurants';
+
+    if (searchCriteria.name?.like) {
+      query += ` WHERE LOWER(name) LIKE LOWER('%${searchCriteria.name.like}%')`;
+    }
+
+    query += ';';
+    
+    const result = await this.database.query(query);
+
+    if (result.rowCount > 0) {
+      const restaurants: Restaurant[] = result.rows.map(row => new Restaurant(row.user_id, row.restaurant_id, row.name, row.delivery_time));
+      return restaurants;
+    }
+
+    return [];
+
   }
 
   async create(entity: Restaurant): Promise<Restaurant> {
@@ -46,18 +67,6 @@ class RestaurantRepository implements Repository<Restaurant> {
     }
 
     return [];
-  }
-
-  //TODO: CHANGE THIS
-  findWhereNameLike = async (name: string) => {
-    const result = await this.database.query(`SELECT * FROM restaurants WHERE name LIKE '%${name}%';`);
-
-    if (result.rowCount > 0) {
-      const restaurants: Restaurant[] = result.rows.map(row => new Restaurant(row.user_id, row.restaurant_id, row.name, row.delivery_time));
-      return restaurants;
-    }
-
-    return null;
   }
 
 
