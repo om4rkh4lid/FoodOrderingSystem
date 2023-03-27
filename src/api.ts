@@ -22,6 +22,7 @@ const RestaurantType = new GraphQLObjectType({
     restaurantId: { type: new GraphQLNonNull(GraphQLInt) },
     name: { type: new GraphQLNonNull(GraphQLString) },
     deliveryTime: { type: new GraphQLNonNull(GraphQLInt) },
+    categories: { type: new GraphQLNonNull(new GraphQLList(GraphQLString))}
   }
 });
 
