@@ -11,10 +11,10 @@ class RestaurantRepository implements SearchableRepository<Restaurant> {
   }
 
   async findWhere(searchCriteria: SearchCriteria<Restaurant>): Promise<Restaurant[]> {
-    let query = 'SELECT * FROM restaurants';
+    let query = 'SELECT * FROM restaurants as r INNER JOIN restaurant_categories AS rc ON r.restaurant_id = rc.restaurant_id INNER JOIN categories AS c ON rc.category_id = c.category_id';
 
     if (searchCriteria.name?.like) {
-      query += ` WHERE LOWER(name) LIKE LOWER('%${searchCriteria.name.like}%')`;
+      query += ` WHERE LOWER(r.name) LIKE LOWER('%${searchCriteria.name.like}%')`;
     }
 
     query += ';';
@@ -22,8 +22,7 @@ class RestaurantRepository implements SearchableRepository<Restaurant> {
     const result = await this.database.query(query);
 
     if (result.rowCount > 0) {
-      const restaurants: Restaurant[] = result.rows.map(row => new Restaurant(row.restaurant_id, row.name, row.delivery_time, []));
-      return restaurants;
+      return this.reduceRestaurants(result.rows);
     }
 
     return [];
@@ -46,13 +45,10 @@ class RestaurantRepository implements SearchableRepository<Restaurant> {
   }
 
   findById = async (id: number) => {
+    const result = await this.database.query(`SELECT * FROM restaurants AS r INNER JOIN restaurant_categories AS rc ON r.restaurant_id = rc.restaurant_id INNER JOIN categories AS c ON rc.category_id = c.category_id WHERE r.restaurant_id=${id};`);
 
-    const result = await this.database.query(`SELECT * FROM restaurants WHERE restaurant_id=${id};`);
-    const row = result.rows[0];
-    
-    if (row) {
-      const restaurant: Restaurant = new Restaurant(row.restaurant_id, row.name, row.delivery_time, []);
-      return restaurant;
+    if (result.rowCount > 0) {
+      return this.reduceRestaurants(result.rows)[0];
     }
 
     return null;
@@ -62,23 +58,27 @@ class RestaurantRepository implements SearchableRepository<Restaurant> {
     const result = await this.database.query('SELECT * FROM restaurants AS r INNER JOIN restaurant_categories AS rc ON r.restaurant_id = rc.restaurant_id INNER JOIN categories AS c ON rc.category_id = c.category_id;');
 
     if (result.rowCount > 0) {
-      const restaurants = result.rows.reduce<Restaurant[]>((finalResult, currentValue) => {
-        const found = finalResult.find(restaurant => restaurant.restaurantId === currentValue.restaurant_id);
-        if (found) {
-          found.categories.push(currentValue.category_name);
-        } else {
-          finalResult.push(new Restaurant(currentValue.restaurant_id, currentValue.name, currentValue.delivery_time, [currentValue.category_name]));
-        }
-
-        return finalResult;
-      }, []);
-
-      console.log(restaurants);
-
-      return restaurants;
+      return this.reduceRestaurants(result.rows);
     }
 
     return [];
+  }
+
+
+  private reduceRestaurants = (queryResult: any[]): Restaurant[] => {
+    const restaurants = queryResult.reduce<Restaurant[]>((finalResult, currentValue) => {
+      const found = finalResult.find(restaurant => restaurant.restaurantId === currentValue.restaurant_id);
+      
+      if (found) {
+        found.categories.push(currentValue.category_name);
+      } else {
+        finalResult.push(new Restaurant(currentValue.restaurant_id, currentValue.name, currentValue.delivery_time, [currentValue.category_name]));
+      }
+
+      return finalResult;
+    }, []);
+
+    return restaurants;
   }
 
 
