@@ -1,13 +1,11 @@
 class Restaurant {
-  private _userId: number;
   private _restaurantId: number;
   private _photo?: any;
   private _categories: string[];
   private _name: string;
   private _deliveryTime: number;
 
-  constructor(userId: number, restaurantId: number, name: string, deliveryTime: number, categories: string[], photo?: any) {
-    this._userId = userId;
+  constructor(restaurantId: number, name: string, deliveryTime: number, categories: string[], photo?: any) {
     this._restaurantId = restaurantId;
     this._name = name;
     this._deliveryTime = deliveryTime;
@@ -15,9 +13,6 @@ class Restaurant {
     this._categories = categories;
   }
 
-  public get userId() {
-    return this._userId
-  }
   public get restaurantId() {
     return this._restaurantId;
   }
