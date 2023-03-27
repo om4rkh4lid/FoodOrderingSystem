@@ -22,7 +22,7 @@ class RestaurantRepository implements SearchableRepository<Restaurant> {
     const result = await this.database.query(query);
 
     if (result.rowCount > 0) {
-      const restaurants: Restaurant[] = result.rows.map(row => new Restaurant(row.user_id, row.restaurant_id, row.name, row.delivery_time));
+      const restaurants: Restaurant[] = result.rows.map(row => new Restaurant(row.restaurant_id, row.name, row.delivery_time, []));
       return restaurants;
     }
 
@@ -51,7 +51,7 @@ class RestaurantRepository implements SearchableRepository<Restaurant> {
     const row = result.rows[0];
     
     if (row) {
-      const restaurant: Restaurant = new Restaurant(row.user_id, row.restaurant_id, row.name, row.delivery_time);
+      const restaurant: Restaurant = new Restaurant(row.restaurant_id, row.name, row.delivery_time, []);
       return restaurant;
     }
 
@@ -59,10 +59,22 @@ class RestaurantRepository implements SearchableRepository<Restaurant> {
   }
 
   findAll = async () => {
-    const result = await this.database.query('SELECT * FROM restaurants;');
+    const result = await this.database.query('SELECT * FROM restaurants AS r INNER JOIN restaurant_categories AS rc ON r.restaurant_id = rc.restaurant_id INNER JOIN categories AS c ON rc.category_id = c.category_id;');
 
     if (result.rowCount > 0) {
-      const restaurants: Restaurant[] = result.rows.map(row => new Restaurant(row.user_id, row.restaurant_id, row.name, row.delivery_time));
+      const restaurants = result.rows.reduce<Restaurant[]>((finalResult, currentValue) => {
+        const found = finalResult.find(restaurant => restaurant.restaurantId === currentValue.restaurant_id);
+        if (found) {
+          found.categories.push(currentValue.category_name);
+        } else {
+          finalResult.push(new Restaurant(currentValue.restaurant_id, currentValue.name, currentValue.delivery_time, [currentValue.category_name]));
+        }
+
+        return finalResult;
+      }, []);
+
+      console.log(restaurants);
+
       return restaurants;
     }
 
