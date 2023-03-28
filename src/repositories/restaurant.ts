@@ -72,7 +72,7 @@ class RestaurantRepository implements SearchableRepository<Restaurant> {
       if (found) {
         found.categories.push(currentValue.category_name);
       } else {
-        finalResult.push(new Restaurant(currentValue.restaurant_id, currentValue.name, currentValue.delivery_time, [currentValue.category_name]));
+        finalResult.push(new Restaurant(currentValue.restaurant_id, currentValue.name, currentValue.delivery_time, [currentValue.category_name], Buffer.from(currentValue.photo)));
       }
 
       return finalResult;
