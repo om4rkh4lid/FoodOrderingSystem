@@ -21,6 +21,7 @@ const RestaurantType = new GraphQLObjectType({
   fields: {
     restaurantId: { type: new GraphQLNonNull(GraphQLInt) },
     name: { type: new GraphQLNonNull(GraphQLString) },
+    photoUrl: { type: new GraphQLNonNull(GraphQLString) },
     deliveryTime: { type: new GraphQLNonNull(GraphQLInt) },
     categories: { type: new GraphQLNonNull(new GraphQLList(GraphQLString))}
   }
@@ -29,9 +30,9 @@ const RestaurantType = new GraphQLObjectType({
 const MenuItemType = new GraphQLObjectType({
   name: 'MenuItem',
   fields: {
-    id: { type: new GraphQLNonNull(GraphQLFloat) },
+    id: { type: new GraphQLNonNull(GraphQLInt) },
     name: { type: new GraphQLNonNull(GraphQLString) },
-    price: { type: new GraphQLNonNull(GraphQLFloat) },
+    price: { type: new GraphQLNonNull(GraphQLInt) },
     description: { type: GraphQLString },
   }
 });
