@@ -72,8 +72,8 @@ const rootQueryType = new GraphQLObjectType({
         return await restaurantService.findRestaurantsWithNameLike(args.nameQuery);
       }
     },
-    menuForRestaurantWithId: {
-      type: MenuType,
+    menu: {
+      type: new GraphQLNonNull(new GraphQLList(MenuItemType)),
       args: {
         restaurantId: { type: new GraphQLNonNull(GraphQLInt) }
       },
