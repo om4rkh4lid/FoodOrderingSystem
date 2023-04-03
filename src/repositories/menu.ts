@@ -15,7 +15,7 @@ class MenuRepository {
     console.log(result.rows);
 
     if (result.rowCount > 0) {
-      const items: MenuItem[] = result.rows.map(item => new MenuItem(item.item_id, item.name, item.price, item.description));
+      const items: MenuItem[] = result.rows.map(item => new MenuItem(item.item_id, item.name, item.price, item.description, item.photo_url));
       console.log(items);
       return items;
     }
