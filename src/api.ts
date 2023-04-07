@@ -1,5 +1,5 @@
 import { graphqlHTTP } from "express-graphql"
-import { GraphQLFloat, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLSchema, GraphQLString } from "graphql";
+import { GraphQLEnumType, GraphQLFloat, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLSchema, GraphQLString } from "graphql";
 import RestaurantService from "./services/restaurant";
 import RestaurantRepository from "./repositories/restaurant";
 import Config from "./config";
@@ -80,6 +80,15 @@ const rootQueryType = new GraphQLObjectType({
       },
       resolve: async (parent, args) => {
         return await menuService.findForRestaurantWithId(args.restaurantId)
+      }
+    },
+    menuItem: {
+      type: MenuItemType,
+      args: {
+        itemId: { type: new GraphQLNonNull(GraphQLInt) }
+      }, 
+      resolve: async (parent, args) =>{
+        return await menuService.findItemById(args.itemId);
       }
     }
   }

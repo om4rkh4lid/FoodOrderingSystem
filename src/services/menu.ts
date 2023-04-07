@@ -11,6 +11,11 @@ class MenuService {
   findForRestaurantWithId = async (restaurantId: number) => {
     return await this.repository.findByRestaurantId(restaurantId);
   }
+
+  findItemById = async (itemId: number) => {
+    return await this.repository.findByItemId(itemId)
+  }
+
 }
 
 export default MenuService;

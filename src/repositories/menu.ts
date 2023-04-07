@@ -23,6 +23,18 @@ class MenuRepository {
     return [];
   }
 
+  findByItemId = async (id: number): Promise<MenuItem | null> => {
+    const result = await this.database.query(`SELECT * FROM menu_items WHERE item_id=${id};`);
+
+    if (result.rowCount > 0) {
+      const items: MenuItem[] = result.rows.map(item => new MenuItem(item.item_id, item.name, item.price, item.description, item.photo_url));
+      console.log(items);
+      return items[0];
+    }
+    
+    return null;
+  }
+
 }
 
 export default MenuRepository;
