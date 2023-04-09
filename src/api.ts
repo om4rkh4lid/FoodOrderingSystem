@@ -90,7 +90,16 @@ const rootQueryType = new GraphQLObjectType({
       resolve: async (parent, args) =>{
         return await menuService.findItemById(args.itemId);
       }
-    }
+    },
+    cartItems: {
+      type: new GraphQLList(new GraphQLNonNull(MenuItemType)),
+      args: {
+        idList: { type: new GraphQLList(GraphQLInt) }
+      }, 
+      resolve: async (parent, args) =>{
+        return await menuService.findItems(args.idList);
+      }
+    },
   }
 })
 

@@ -11,12 +11,9 @@ class MenuRepository {
   findByRestaurantId = async (id: number): Promise<MenuItem[]> => {
 
     const result = await this.database.query(`SELECT * FROM menu_items WHERE restaurant_id=${id};`);
-    
-    console.log(result.rows);
 
     if (result.rowCount > 0) {
-      const items: MenuItem[] = result.rows.map(item => new MenuItem(item.item_id, item.name, item.price, item.description, item.photo_url));
-      console.log(items);
+      const items: MenuItem[] = this.reduce(result.rows);
       return items;
     }
 
@@ -27,12 +24,26 @@ class MenuRepository {
     const result = await this.database.query(`SELECT * FROM menu_items WHERE item_id=${id};`);
 
     if (result.rowCount > 0) {
-      const items: MenuItem[] = result.rows.map(item => new MenuItem(item.item_id, item.name, item.price, item.description, item.photo_url));
-      console.log(items);
+      const items: MenuItem[] = this.reduce(result.rows);
       return items[0];
     }
     
     return null;
+  }
+
+  findItems =async (idList: number[]) => {
+    const result = await this.database.query(`SELECT * FROM menu_items WHERE item_id in (${idList.join(', ')});`);
+
+    if (result.rowCount > 0) {
+      const items: MenuItem[] = this.reduce(result.rows);
+      return items;
+    }
+    
+    return [];
+  }
+
+  private reduce = (queryResult: any[]): MenuItem[] => {
+    return queryResult.map(item => new MenuItem(item.item_id, item.name, item.price, item.description, item.photo_url));
   }
 
 }
