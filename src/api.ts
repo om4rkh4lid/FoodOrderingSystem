@@ -31,6 +31,7 @@ const MenuItemType = new GraphQLObjectType({
   name: 'MenuItem',
   fields: {
     id: { type: new GraphQLNonNull(GraphQLInt) },
+    restaurantId: { type: new GraphQLNonNull(GraphQLInt) },
     name: { type: new GraphQLNonNull(GraphQLString) },
     price: { type: new GraphQLNonNull(GraphQLInt) },
     description: { type: GraphQLString },

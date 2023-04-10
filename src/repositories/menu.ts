@@ -43,7 +43,9 @@ class MenuRepository {
   }
 
   private reduce = (queryResult: any[]): MenuItem[] => {
-    return queryResult.map(item => new MenuItem(item.item_id, item.name, item.price, item.description, item.photo_url));
+    const results = queryResult.map(item => new MenuItem(item.item_id, item.name, item.price, item.description, item.photo_url, item.restaurant_id));
+    console.log(results);
+    return results;
   }
 
 }
