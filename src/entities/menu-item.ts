@@ -20,7 +20,7 @@ class MenuItem {
   }
   
   public get restaurantId() {
-    return this._id;
+    return this._restaurantId;
   }
 
   public get name() {
