@@ -5,14 +5,18 @@ import RestaurantRepository from "./repositories/restaurant";
 import Config from "./config";
 import MenuService from "./services/menu";
 import MenuRepository from "./repositories/menu";
+import AddressService from "./services/address";
+import AddressRepository from "./repositories/address";
 
 const apiMiddleware = graphqlHTTP;
 
 const restaurantRepository = new RestaurantRepository();
 const menuRepository = new MenuRepository();
+const addressRepository = new AddressRepository();
 
 const menuService = new MenuService(menuRepository);
 const restaurantService = new RestaurantService(restaurantRepository);
+const addressService = new AddressService(addressRepository);
 
 
 
@@ -39,10 +43,15 @@ const MenuItemType = new GraphQLObjectType({
   }
 });
 
-const MenuType = new GraphQLObjectType({
-  name: 'Menu',
+const AddressType = new GraphQLObjectType({
+  name: 'Address',
   fields: {
-    items: { type: new GraphQLNonNull(new GraphQLList(MenuItemType))}
+    id: { type: new GraphQLNonNull(GraphQLInt) },
+    alias: { type: GraphQLString },
+    street: { type: new GraphQLNonNull(GraphQLString) },
+    building: { type: new GraphQLNonNull(GraphQLInt) },
+    floor: { type: new GraphQLNonNull(GraphQLInt) },
+    description: { type: GraphQLString },
   },
 });
 
@@ -101,6 +110,15 @@ const rootQueryType = new GraphQLObjectType({
         return await menuService.findItems(args.idList);
       }
     },
+    addresses: {
+      type: new GraphQLNonNull(new GraphQLList(AddressType)),
+      args: {
+        userId: { type: new GraphQLNonNull(GraphQLInt) }
+      },
+      resolve: async (parent, args) => {
+        return await addressService.findByUserId(args.userId);
+      }
+    }
   }
 })
 
