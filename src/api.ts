@@ -49,6 +49,7 @@ const AddressType = new GraphQLObjectType({
     id: { type: new GraphQLNonNull(GraphQLInt) },
     alias: { type: GraphQLString },
     street: { type: new GraphQLNonNull(GraphQLString) },
+    area: { type: new GraphQLNonNull(GraphQLString) },
     building: { type: new GraphQLNonNull(GraphQLInt) },
     floor: { type: new GraphQLNonNull(GraphQLInt) },
     description: { type: GraphQLString },

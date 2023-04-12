@@ -11,7 +11,7 @@ class AddressRepository implements SearchableRepository<Address> {
   }
 
   findWhere = async (searchCriteria: SearchCriteria<Address>): Promise<Address[]> => {
-    let query = 'SELECT * FROM delivery_addresses';
+    let query = 'SELECT * FROM delivery_addresses AS d INNER JOIN areas AS a ON d.area_id = a.id';
 
     if (searchCriteria.userId?.equals) {
       query += ` WHERE user_id = ${searchCriteria.userId.equals}`;
@@ -29,7 +29,7 @@ class AddressRepository implements SearchableRepository<Address> {
   }
 
   private reduce = (queryResult: any[]): Address[] => {
-    const results = queryResult.map(item => new Address(item.address_id, item.user_id, item.street, item.building, item.floor_number, item.description, item.alias));
+    const results = queryResult.map(item => new Address(item.address_id, item.user_id, item.area_name, item.street, item.building, item.floor_number, item.description, item.alias));
     console.log(results);
     return results;
   }
