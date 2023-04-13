@@ -114,10 +114,10 @@ const rootQueryType = new GraphQLObjectType({
     addresses: {
       type: new GraphQLNonNull(new GraphQLList(AddressType)),
       args: {
-        userId: { type: new GraphQLNonNull(GraphQLInt) }
+        clientId: { type: new GraphQLNonNull(GraphQLInt) }
       },
       resolve: async (parent, args) => {
-        return await addressService.findByUserId(args.userId);
+        return await addressService.findByClientId(args.clientId);
       }
     }
   }

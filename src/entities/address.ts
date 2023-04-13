@@ -1,6 +1,6 @@
 class Address {
   private _id: number;
-  private _userId: number;
+  private _clientId: number;
   private _street: string;
   private _area: string;
   private _building: number;
@@ -8,9 +8,9 @@ class Address {
   private _description?: string;
   private _alias?: string;
   
-  constructor(id: number, userId: number, area: string, street: string, building: number, floor: number, description: string, alias: string) {
+  constructor(id: number, clientId: number, area: string, street: string, building: number, floor: number, description: string, alias: string) {
     this._id = id;
-    this._userId = userId;
+    this._clientId = clientId;
     this._street = street;
     this._area = area;
     this._building = building;
@@ -25,11 +25,11 @@ class Address {
   public set id(value: number) {
     this._id = value;
   }
-  public get userId(): number {
-    return this._userId;
+  public get clientId(): number {
+    return this._clientId;
   }
-  public set userId(value: number) {
-    this._userId = value;
+  public set clientId(value: number) {
+    this._clientId = value;
   }
   public get building(): number {
     return this._building;

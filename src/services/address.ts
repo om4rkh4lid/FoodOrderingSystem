@@ -7,8 +7,8 @@ class AddressService {
     this.repository = repository;
   }
 
-  findByUserId = async (id: number) => {
-    return this.repository.findWhere({ userId: { equals: id} });
+  findByClientId = async (id: number) => {
+    return this.repository.findWhere({ clientId: { equals: id} });
   }
 }
 

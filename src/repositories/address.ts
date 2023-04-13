@@ -13,8 +13,8 @@ class AddressRepository implements SearchableRepository<Address> {
   findWhere = async (searchCriteria: SearchCriteria<Address>): Promise<Address[]> => {
     let query = 'SELECT * FROM delivery_addresses AS d INNER JOIN areas AS a ON d.area_id = a.id';
 
-    if (searchCriteria.userId?.equals) {
-      query += ` WHERE user_id = ${searchCriteria.userId.equals}`;
+    if (searchCriteria.clientId?.equals) {
+      query += ` WHERE client_id = ${searchCriteria.clientId.equals}`;
     }
 
     query += ';'
