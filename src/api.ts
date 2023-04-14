@@ -1,5 +1,5 @@
 import { graphqlHTTP } from "express-graphql"
-import { GraphQLEnumType, GraphQLFloat, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLSchema, GraphQLString } from "graphql";
+import { GraphQLInputObjectType, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLSchema, GraphQLString } from "graphql";
 import RestaurantService from "./services/restaurant";
 import RestaurantRepository from "./repositories/restaurant";
 import Config from "./config";
@@ -7,16 +7,20 @@ import MenuService from "./services/menu";
 import MenuRepository from "./repositories/menu";
 import AddressService from "./services/address";
 import AddressRepository from "./repositories/address";
+import OrderRepository from "./repositories/order";
+import OrderService from "./services/order";
 
 const apiMiddleware = graphqlHTTP;
 
 const restaurantRepository = new RestaurantRepository();
 const menuRepository = new MenuRepository();
 const addressRepository = new AddressRepository();
+const orderRepository = new OrderRepository();
 
 const menuService = new MenuService(menuRepository);
 const restaurantService = new RestaurantService(restaurantRepository);
 const addressService = new AddressService(addressRepository);
+const orderService = new OrderService(orderRepository);
 
 
 
@@ -27,7 +31,7 @@ const RestaurantType = new GraphQLObjectType({
     name: { type: new GraphQLNonNull(GraphQLString) },
     photoUrl: { type: new GraphQLNonNull(GraphQLString) },
     deliveryTime: { type: new GraphQLNonNull(GraphQLInt) },
-    categories: { type: new GraphQLNonNull(new GraphQLList(GraphQLString))}
+    categories: { type: new GraphQLNonNull(new GraphQLList(GraphQLString)) }
   }
 });
 
@@ -54,6 +58,21 @@ const AddressType = new GraphQLObjectType({
     floor: { type: new GraphQLNonNull(GraphQLInt) },
     description: { type: GraphQLString },
   },
+});
+
+const OrderItemType = new GraphQLInputObjectType({
+  name: 'OrderItem',
+  fields: {
+    itemId: { type: new GraphQLNonNull(GraphQLInt) },
+    qty: { type: new GraphQLNonNull(GraphQLInt) },
+  }
+});
+
+const OrderType = new GraphQLObjectType({
+  name: 'Order',
+  fields: {
+    orderId: { type: GraphQLInt }
+  }
 });
 
 const rootQueryType = new GraphQLObjectType({
@@ -97,8 +116,8 @@ const rootQueryType = new GraphQLObjectType({
       type: MenuItemType,
       args: {
         itemId: { type: new GraphQLNonNull(GraphQLInt) }
-      }, 
-      resolve: async (parent, args) =>{
+      },
+      resolve: async (parent, args) => {
         return await menuService.findItemById(args.itemId);
       }
     },
@@ -106,8 +125,8 @@ const rootQueryType = new GraphQLObjectType({
       type: new GraphQLList(new GraphQLNonNull(MenuItemType)),
       args: {
         idList: { type: new GraphQLList(GraphQLInt) }
-      }, 
-      resolve: async (parent, args) =>{
+      },
+      resolve: async (parent, args) => {
         return await menuService.findItems(args.idList);
       }
     },
@@ -123,8 +142,28 @@ const rootQueryType = new GraphQLObjectType({
   }
 })
 
+const rootMutationType = new GraphQLObjectType({
+  name: 'Mutation',
+  description: 'The root of all Mutation types',
+  fields: {
+    createOrder: {
+      type: OrderType,
+      args: {
+        clientId: { type: new GraphQLNonNull(GraphQLInt) },
+        restaurantId: { type: new GraphQLNonNull(GraphQLInt) },
+        addressId: { type: new GraphQLNonNull(GraphQLInt) },
+        orderItems: { type: new GraphQLNonNull(new GraphQLList(OrderItemType)) }
+      },
+      resolve: async (parent, args) => {
+        return await orderService.create(args.clientId, args.restaurantId, args.addressId, args.orderItems);
+      }
+    }
+  }
+});
+
 const apiSchema = new GraphQLSchema({
-  query: rootQueryType
+  query: rootQueryType,
+  mutation: rootMutationType
 })
 
 export const rootEndpoint = '/graphql';
