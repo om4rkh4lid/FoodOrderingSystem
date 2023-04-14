@@ -68,10 +68,37 @@ const OrderItemType = new GraphQLInputObjectType({
   }
 });
 
+const FindOrderItemType = new GraphQLObjectType({
+  name: 'FindOrderItem',
+  fields: {
+    item: { type: MenuItemType },
+    qty: { type: new GraphQLNonNull(GraphQLInt) },
+  }
+});
+
 const OrderType = new GraphQLObjectType({
   name: 'Order',
   fields: {
     orderId: { type: GraphQLInt }
+  }
+});
+
+const ClientType = new GraphQLObjectType({
+  name: 'Client',
+  fields: {
+    clientId: { type: GraphQLInt },
+    firstName: { type: GraphQLString },
+    lastName: { type: GraphQLString },
+  }
+});
+
+const FindOrderType = new GraphQLObjectType({
+  name: 'FindOrder',
+  fields: {
+    restaurant: { type: RestaurantType },
+    address: { type: AddressType },
+    client: { type: ClientType },
+    items: { type: new GraphQLList(FindOrderItemType) }
   }
 });
 
@@ -138,6 +165,15 @@ const rootQueryType = new GraphQLObjectType({
       resolve: async (parent, args) => {
         return await addressService.findByClientId(args.clientId);
       }
+    },
+    findOrder: {
+      type: FindOrderType,
+      args: {
+        orderId: { type: new GraphQLNonNull(GraphQLInt) }
+      },
+      resolve: async (parent, args) => {
+        return await orderService.findById(args.orderId);
+      }
     }
   }
 })
@@ -157,7 +193,7 @@ const rootMutationType = new GraphQLObjectType({
       resolve: async (parent, args) => {
         return await orderService.create(args.clientId, args.restaurantId, args.addressId, args.orderItems);
       }
-    }
+    },
   }
 });
 
