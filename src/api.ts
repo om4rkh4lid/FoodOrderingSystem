@@ -98,7 +98,8 @@ const FindOrderType = new GraphQLObjectType({
     restaurant: { type: RestaurantType },
     address: { type: AddressType },
     client: { type: ClientType },
-    items: { type: new GraphQLList(FindOrderItemType) }
+    items: { type: new GraphQLList(FindOrderItemType) },
+    status: { type: new GraphQLNonNull(GraphQLString) }
   }
 });
 
