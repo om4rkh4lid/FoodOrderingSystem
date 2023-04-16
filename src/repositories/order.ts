@@ -36,7 +36,7 @@ class OrderRepository {
   }
 
   async findById(id: any): Promise<Order | null> {
-    let query = `SELECT *, r.name as restaurant_name, mi.name as item_name, mi.photo_url as item_photo, r.photo_url as restaurant_photo FROM orders AS o INNER JOIN delivery_addresses AS da ON o.address_id = da.address_id                              
+    let query = `SELECT *, r.name as restaurant_name, mi.name as item_name, mi.photo_url as item_photo, r.photo_url as restaurant_photo, da.description as address_description FROM orders AS o INNER JOIN delivery_addresses AS da ON o.address_id = da.address_id                              
     INNER JOIN restaurants AS r ON o.restaurant_id = r.restaurant_id INNER JOIN clients AS c ON o.client_id = c.client_id                                                                      
     INNER JOIN order_items AS oi ON oi.order_id = o.order_id INNER JOIN menu_items AS mi ON mi.item_id = oi.item_id 
     INNER JOIN areas AS a ON a.id = da.area_id WHERE o.order_id = ${id};`;
@@ -53,7 +53,7 @@ class OrderRepository {
       } else {
         const restaurant = new Restaurant(current.restaurant_id, current.restaurant_name, current.delivery_time, [], current.restaurant_photo);
         const client: Client = { clientId: current.client_id, firstName: current.first_name, lastName: current.last_name };
-        const address = new Address(current.address_id, current.client_id, current.area_name, current.street, current.building, current.floor_number, current.description, current.alias);
+        const address = new Address(current.address_id, current.client_id, current.area_name, current.street, current.building, current.floor_number, current.address_description, current.alias);
         const menuItem = new MenuItem(current.item_id, current.item_name, current.price, current.description, current.item_photo, current.restaurant_id);
         const orderItem = { item: menuItem, qty: current.qty };
         const order: Order = { orderId: current.order_id, restaurant, client, address, items: [orderItem], status: current.status };
